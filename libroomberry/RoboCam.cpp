@@ -144,6 +144,7 @@ bool RoboCam::getObjectPosition( int minSize, int *x, int *y, int *size, int *ke
         contours.clear();
     }
     // Draw contours
+    /*
     if ( maxRadius >= 0 ) {
         if ( showPreviewWindow ) {
             circle( imgOriginal, maxCenter, (int)maxRadius, colGreen, 2, 8, 0 );
@@ -154,7 +155,7 @@ bool RoboCam::getObjectPosition( int minSize, int *x, int *y, int *size, int *ke
         *y = (int)maxCenter.y;
         *size = (int)maxRadius;
     }
-    
+    */
     if ( showPreviewWindow ) {
         imshow("Original", imgOriginal); //show the original image
         if ( showControls ) {

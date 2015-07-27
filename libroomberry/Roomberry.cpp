@@ -287,6 +287,39 @@ bool Roomberry::getAllBumper (roomberryBumper_t *bumper,
     return (success);
 }
 
+bool Roomberry::getSensors ( roomberryBumper_t *bumper,
+                             roomberryLightBumper_t *lightBumper,
+                             roomberryLightBumperSignals_t *lightBumperSignals,
+                             int16_t *distance, int16_t *angle ) {
+    
+    uint8_t buffer[] = { 149, 5, 7, 45, 106, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    bool success = FALSE;
+    
+    if (sendCommand ( 7, 18, buffer )) {
+        bumper->right = ( buffer[0] & 1 );
+        bumper->left  = ( buffer[0] & 2 );
+        
+        lightBumper->left        = buffer[1] &  1;
+        lightBumper->frontLeft   = buffer[1] &  2;
+        lightBumper->centerLeft  = buffer[1] &  4;
+        lightBumper->centerRight = buffer[1] &  8;
+        lightBumper->frontRight  = buffer[1] & 16;
+        lightBumper->right       = buffer[1] & 32;
+        
+        lightBumperSignals->left        = WORD(buffer[2],  buffer[3]);
+        lightBumperSignals->frontLeft   = WORD(buffer[4],  buffer[5]);
+        lightBumperSignals->centerLeft  = WORD(buffer[6],  buffer[7]);
+        lightBumperSignals->centerRight = WORD(buffer[8],  buffer[9]);
+        lightBumperSignals->frontRight  = WORD(buffer[10], buffer[11]);
+        lightBumperSignals->right       = WORD(buffer[12], buffer[13]);
+        
+        *distance = WORD(buffer[14], buffer[15]);
+        *angle    = WORD(buffer[16], buffer[17]);
+        
+        success=TRUE;
+    }
+    return (success);
+}
 /* ------------------------------------------------------------------------------ *
  * Notice Movement
  * ------------------------------------------------------------------------------ */

@@ -183,6 +183,22 @@ public:
     bool getAllBumper ( roomberryBumper_t *bumper,
                         roomberryLightBumper_t *lightBumper,
                         roomberryLightBumperSignals_t *lightBumperSignals );
+
+    /** Read front bumpers, light bumpers and light bumpers signal, angle distance
+     *  values all at once
+     *
+     * \param *bumper Pointer to store bumper state
+     * \param *lightBumper Pointer to store light bumper state
+     * \param *lightBumperSignals Pointer to store light bumper signal values
+     * \param *distance distance value
+     * \param *angle angle value
+     *
+     * \return Successful command execution (TRUE/FALSE)
+     */
+    bool getSensors ( roomberryBumper_t *bumper,
+                      roomberryLightBumper_t *lightBumper,
+                      roomberryLightBumperSignals_t *lightBumperSignals,
+                      int16_t *distance, int16_t *angle );
     
     /** Read light bump left signal value
      *

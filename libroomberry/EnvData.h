@@ -42,6 +42,10 @@
 #define VIDEO_HEIGHT     240
 #define MIN_OBJ_SIZE      25
 
+
+// full spin is at angle of 160
+#define FACTOR_ANGLE ((float)(360.0/160.0))
+
 void   *cameraControl( void *tArg );
 
 typedef struct {
@@ -92,6 +96,14 @@ public:
     uint16_t getLightBumperSignalCenterRight(void);
     uint16_t getLightBumperSignalCenterLeft(void);
 
+    int16_t getAngle(void);
+    int32_t getDistanceAccumulated(void);
+    int16_t getDistance(void);
+    int16_t getHeading(void);
+    
+    int16_t resetHeading(void);
+    int32_t resetDistance(void);
+    
     bool readCamData(void);
 
     bool  getCamObjDetected(void);
@@ -112,6 +124,9 @@ private:
     roomberryLightBumper_t        lightBumper;
     roomberryBumper_t             bumper;
     
+    int16_t heading, angle, distance;
+    int32_t distanceAccumulated;
+
     // PIR sensors
     bool pirRight;
     bool pirLeft;
@@ -141,7 +156,6 @@ private:
 
     RoboCam *cam;
     bool    showPreviewWindow;
-
 };
 
 #endif

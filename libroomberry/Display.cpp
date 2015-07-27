@@ -44,17 +44,17 @@ Display::Display( EnvData *data, CommandQ *myCmd, int sMin ) {
     cbreak();
     curs_set(0);
     
-    mvprintw (  5, 5, "      WSK\\         ooo OOO OOO ooo        /WSK       ");
-    mvprintw (  6, 5, "          \\    oOO xxx IR| |IR xxx OOo   /           ");
-    mvprintw (  7, 5, "           oOO <+--------+ +--------+> OOo           ");
-    mvprintw (  8, 5, "        oOO PIR |                   | PIR OOo        ");
-    mvprintw (  9, 5, "      oOO <---+-+                   +-+---> OOo      ");
-    mvprintw ( 10, 5, "    oOO xxx IR|           ^           |IR xxx OOo    ");
-    mvprintw ( 11, 5, "   oOO <------+         +---+         +------> OOo   ");
+    mvprintw (  5, 5, "      WSK\\        ooo OOOOOOO ooo        /WSK       ");
+    mvprintw (  6, 5, "          \\   oOO xxxx IR|IR xxxx OOo   /           ");
+    mvprintw (  7, 5, "           oOO <+---------+---------+> OOo           ");
+    mvprintw (  8, 5, "        oOO PIR |D dddddd |H   aaaa | PIR OOo        ");
+    mvprintw (  9, 5, "      oOO <-----+---------+---------+-----> OOo      ");
+    mvprintw ( 10, 5, "    oOO xxxx IR|          ^          |IR xxxx OOo    ");
+    mvprintw ( 11, 5, "   oOO <-------+        +---+        +-------> OOo   ");
     mvprintw ( 12, 5, "  oOO xx Sonar|        <|000|>        |Sonar xx OOo  ");
-    mvprintw ( 13, 5, " oOO <-----+--+         +---+         +--+-----> OOo ");
-    mvprintw ( 14, 5, " oOO xxx IR|              v              |IR xxx OOo ");
-    mvprintw ( 15, 5, " oOO <-----+                             +-----> OOo ");
+    mvprintw ( 13, 5, " oOO <--------+         +---+         +--------> OOo ");
+    mvprintw ( 14, 5, " oOO xxxx IR|             v             |IR xxxx OOo ");
+    mvprintw ( 15, 5, " oOO <------+                           +------> OOo ");
     mvprintw ( 16, 5, " oOO                                             OOo ");
     mvprintw ( 17, 5, " oOO                                             OOo ");
     mvprintw ( 18, 5, "  oOO                                           OOo  ");
@@ -85,21 +85,25 @@ int Display::update() {
     envData->readCamData();
     mvprintw ( 24, 33, "%2.2f", envData->getCamFPS() );
     
+    // Distance & Angle
+    mvprintw (  8, 24, "%06d", envData->getDistanceAccumulated() );
+    mvprintw (  8, 36, "%04d", envData->getHeading() );
+
     // Light Bumper Signals
     color_set(envData->getLightBumperLeft() ? 3 : 2 ,0);
-    mvprintw ( 14, 10, "%03d", envData->getLightBumperSignalLeft()  );
+    mvprintw ( 14, 10, "%04d", envData->getLightBumperSignalLeft()  );
     color_set(envData->getLightBumperRight() ? 3 : 2 ,0);
-    mvprintw ( 14, 50, "%03d", envData->getLightBumperSignalRight() );
+    mvprintw ( 14, 49, "%04d", envData->getLightBumperSignalRight() );
     
     color_set(envData->getLightBumperFrontLeft() ? 3 : 2 ,0);
-    mvprintw ( 10, 13, "%03d", envData->getLightBumperSignalFrontLeft()  );
+    mvprintw ( 10, 13, "%04d", envData->getLightBumperSignalFrontLeft()  );
     color_set(envData->getLightBumperFrontRight() ? 3 : 2 ,0);
-    mvprintw ( 10, 47, "%03d", envData->getLightBumperSignalFrontRight() );
+    mvprintw ( 10, 46, "%04d", envData->getLightBumperSignalFrontRight() );
     
     color_set(envData->getLightBumperCenterLeft() ? 3 : 2 ,0);
-    mvprintw ( 06, 24, "%03d", envData->getLightBumperSignalCenterLeft()  );
+    mvprintw ( 06, 23, "%04d", envData->getLightBumperSignalCenterLeft()  );
     color_set(envData->getLightBumperCenterRight() ? 3 : 2 ,0);
-    mvprintw ( 06, 36, "%03d", envData->getLightBumperSignalCenterRight() );
+    mvprintw ( 06, 34, "%04d", envData->getLightBumperSignalCenterRight() );
     
     // Whisker
     color_set(envData->getWhiskerLeft() ? 3 : 1 ,0);
@@ -140,14 +144,14 @@ int Display::update() {
     
     // Left and right Bumper
     color_set(envData->getBumperLeft() ? 3 : 1 ,0);
-    mvprintw (  5, 24, "ooo OOO");
-    mvprintw (  6, 20, "oOO"    );
+    mvprintw (  5, 23, "ooo OOO");
+    mvprintw (  6, 19, "oOO"    );
     mvprintw (  7, 16, "oOO"    );
     mvprintw (  8, 13, "oOO"    );
     
     color_set(envData->getBumperRight() ? 3 : 1 ,0);
     mvprintw (  5, 32, "OOO ooo");
-    mvprintw (  6, 40, "OOo"    );
+    mvprintw (  6, 39, "OOo"    );
     mvprintw (  7, 44, "OOo"    );
     mvprintw (  8, 47, "OOo"    );
     

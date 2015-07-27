@@ -62,6 +62,11 @@ EnvData::EnvData(Roomberry *myRoomba, bool useCam, bool pv ) {
     lightBumperSignals.centerRight = 0;
     lightBumperSignals.centerLeft  = 0;
 
+    distanceAccumulated = 0;
+    distance            = 0;
+    heading             = 0;
+    angle               = 0;
+    
     i2cIoExp->reset();
     i2cIoExp->setMode(PIR_RIGHT|PIR_LEFT|BTN_WSK_LEFT|BTN_WSK_RIGHT);
 }
@@ -111,8 +116,18 @@ int EnvData::readSensors(void) {
     int key=0;
     // read sensor data
     if ( roomba ) {
-        roomba->getAllBumper (&bumper, &lightBumper, &lightBumperSignals);
+        roomba->getSensors (&bumper, &lightBumper, &lightBumperSignals, &distance, &angle );
+        distanceAccumulated += distance;
+    
+        
+        angle = (int32_t) ( (float)angle * FACTOR_ANGLE );
+        heading += angle;
+        if (angle < 0) {
+            heading += 360;
+        }
+        heading %= 360;
     }
+    
     sonarRight = i2cSonarRight->getRealRangeCm();
     sonarLeft  = i2cSonarLeft->getRealRangeCm();
 
@@ -132,23 +147,25 @@ bool EnvData::object(void) {
 
 bool EnvData::objectLeft(void) {
     return (   bumper.left
-            || lightBumper.frontLeft
             || lightBumper.centerLeft
+            || lightBumper.frontLeft
+            || lightBumper.left
             || sonarLeft < SONAR_MIN
             || whiskerLeft );
 }
 
 bool EnvData::objectRight(void) {
     return (   bumper.right
-            || lightBumper.frontRight
             || lightBumper.centerRight
+            || lightBumper.frontRight
+            || lightBumper.right
             || sonarRight < SONAR_MIN
             || whiskerRight );
 }
 
 bool EnvData::objectFront(void) {
     return (   ( bumper.right && bumper.left )
-            || ( lightBumper.frontRight && lightBumper.frontLeft )
+            || ( lightBumper.centerRight && lightBumper.centerLeft )
             || ( whiskerRight && whiskerLeft ) );
 }
 
@@ -163,6 +180,23 @@ float  EnvData::getCamFPS(void) {
 void EnvData::stop (void) {
     camData.run = FALSE;
 }
+
+int16_t EnvData::resetHeading(void) {
+    int16_t retval = heading;
+    heading = 0;
+    return retval;
+}
+
+int32_t EnvData::resetDistance(void) {
+    int32_t retval = distanceAccumulated;
+    distanceAccumulated = 0;
+    return retval;
+}
+
+int16_t EnvData::getAngle(void)                         { return ( angle                          ); }
+int16_t EnvData::getHeading(void)                       { return ( heading                        ); }
+int16_t EnvData::getDistance(void)                      { return ( distance                       ); }
+int32_t EnvData::getDistanceAccumulated(void)           { return ( distanceAccumulated            ); }
 
 bool     EnvData::getPirRight(void)                     { return ( pirRight                       ); }
 bool     EnvData::getPirLeft(void)                      { return ( pirLeft                        ); }
