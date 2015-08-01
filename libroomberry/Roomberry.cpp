@@ -290,9 +290,9 @@ bool Roomberry::getAllBumper (roomberryBumper_t *bumper,
 bool Roomberry::getSensors ( roomberryBumper_t *bumper,
                              roomberryLightBumper_t *lightBumper,
                              roomberryLightBumperSignals_t *lightBumperSignals,
-                             int16_t *distance, int16_t *angle ) {
+                             uint16_t *encRight, uint16_t *encLeft ) {
     
-    uint8_t buffer[] = { 149, 5, 7, 45, 106, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    uint8_t buffer[] = { 149, 5, 7, 45, 106, 43, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     bool success = FALSE;
     
     if (sendCommand ( 7, 18, buffer )) {
@@ -313,8 +313,8 @@ bool Roomberry::getSensors ( roomberryBumper_t *bumper,
         lightBumperSignals->frontRight  = WORD(buffer[10], buffer[11]);
         lightBumperSignals->right       = WORD(buffer[12], buffer[13]);
         
-        *distance = WORD(buffer[14], buffer[15]);
-        *angle    = WORD(buffer[16], buffer[17]);
+        *encRight = WORD(buffer[14], buffer[15]);
+        *encLeft  = WORD(buffer[16], buffer[17]);
         
         success=TRUE;
     }
@@ -345,6 +345,19 @@ bool Roomberry::getAngle( int16_t *angle ) {
     }
     return(success);
 }
+
+bool Roomberry::getEncoderCounts( uint16_t *encRight, uint16_t *encLeft ) {
+    uint8_t buffer[] = { 149, 2, 43, 44 };
+    bool success = FALSE;
+    
+    if (sendCommand ( 4, 4, buffer )) {
+        *encRight = WORD(buffer[0], buffer[1]);
+        *encLeft  = WORD(buffer[0], buffer[1]);
+        success = TRUE;
+    }
+    return(success);
+}
+
 
 
 /* ------------------------------------------------------------------------------ *
@@ -387,6 +400,11 @@ bool Roomberry::spin(int16_t velocity, bool clockwise) {
 
 bool Roomberry::stop(void) {
     return( turn( 0, 0 ) );
+}
+
+void Roomberry::getWheelDirection ( roomberryDirection_t *rightWheel, roomberryDirection_t *leftWheel) {
+    *rightWheel = rightWheelDirection;
+    *leftWheel  = leftWheelDirection;
 }
 
 bool Roomberry::vacuum(bool on) {

@@ -43,8 +43,8 @@
 #define MIN_OBJ_SIZE      25
 
 
-// full spin is at angle of 160
-#define FACTOR_ANGLE ((float)(360.0/160.0))
+// full spin factor o 360 deg
+#define FACTOR_ANGLE (360.0/156.0)
 
 void   *cameraControl( void *tArg );
 
@@ -62,7 +62,7 @@ class EnvData {
 public:
     EnvData(Roomberry *myRoomba, bool useCam, bool pv );
     void stop (void);
-    int readSensors(void);
+    int  readSensors(void);
 
     bool object(void);
     bool objectLeft(void);
@@ -96,13 +96,14 @@ public:
     uint16_t getLightBumperSignalCenterRight(void);
     uint16_t getLightBumperSignalCenterLeft(void);
 
-    int16_t getAngle(void);
-    int32_t getDistanceAccumulated(void);
-    int16_t getDistance(void);
-    int16_t getHeading(void);
+    uint16_t getEncRight(void);
+    uint16_t getEncLeft(void);
     
-    int16_t resetHeading(void);
+    int32_t getDistance(void);
     int32_t resetDistance(void);
+
+    uint16_t getHeading(void);
+    uint16_t resetHeading(void);
     
     bool readCamData(void);
 
@@ -124,9 +125,13 @@ private:
     roomberryLightBumper_t        lightBumper;
     roomberryBumper_t             bumper;
     
-    int16_t heading, angle, distance;
-    int32_t distanceAccumulated;
+    // Wheel encoder values, resulting distance and heading
+    uint16_t encRight, encLeft;
+    int16_t  veloRight, veloLeft;
 
+    int32_t  distance;
+    uint16_t heading;
+    
     // PIR sensors
     bool pirRight;
     bool pirLeft;

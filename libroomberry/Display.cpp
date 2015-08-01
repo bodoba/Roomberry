@@ -47,7 +47,7 @@ Display::Display( EnvData *data, CommandQ *myCmd, int sMin ) {
     mvprintw (  5, 5, "      WSK\\        ooo OOOOOOO ooo        /WSK       ");
     mvprintw (  6, 5, "          \\   oOO xxxx IR|IR xxxx OOo   /           ");
     mvprintw (  7, 5, "           oOO <+---------+---------+> OOo           ");
-    mvprintw (  8, 5, "        oOO PIR |D dddddd |H   aaaa | PIR OOo        ");
+    mvprintw (  8, 5, "        oOO PIR |L llllll |R rrrrrr | PIR OOo        ");
     mvprintw (  9, 5, "      oOO <-----+---------+---------+-----> OOo      ");
     mvprintw ( 10, 5, "    oOO xxxx IR|          ^          |IR xxxx OOo    ");
     mvprintw ( 11, 5, "   oOO <-------+        +---+        +-------> OOo   ");
@@ -85,9 +85,9 @@ int Display::update() {
     envData->readCamData();
     mvprintw ( 24, 33, "%2.2f", envData->getCamFPS() );
     
-    // Distance & Angle
-    mvprintw (  8, 24, "%06d", envData->getDistanceAccumulated() );
-    mvprintw (  8, 36, "%04d", envData->getHeading() );
+    // Encoder
+    mvprintw (  8, 24, "%06d", envData->getEncRight() );
+    mvprintw (  8, 34, "%06d", envData->getEncLeft() );
 
     // Light Bumper Signals
     color_set(envData->getLightBumperLeft() ? 3 : 2 ,0);

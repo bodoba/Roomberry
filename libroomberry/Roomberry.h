@@ -36,6 +36,12 @@
 
 #define ROOMBERRY_BAUDRATE B115200
 
+typedef enum {
+    D_FWD,
+    D_STP,
+    D_REV,
+} roomberryDirection_t;
+
 typedef struct {
     uint8_t   chargingState;
     uint16_t  voltage;
@@ -184,21 +190,21 @@ public:
                         roomberryLightBumper_t *lightBumper,
                         roomberryLightBumperSignals_t *lightBumperSignals );
 
-    /** Read front bumpers, light bumpers and light bumpers signal, angle distance
-     *  values all at once
+    /** Read front bumpers, light bumpers and light bumpers signal, 
+     * encoder counts for right and left wheel, velocity for each swheel
      *
      * \param *bumper Pointer to store bumper state
      * \param *lightBumper Pointer to store light bumper state
      * \param *lightBumperSignals Pointer to store light bumper signal values
-     * \param *distance distance value
-     * \param *angle angle value
+     * \param *encRight   Pointer to store the right encoder count (0-65535)
+     * \param *encLeft    Pointer to store the left encoder count (0-65535)
      *
      * \return Successful command execution (TRUE/FALSE)
      */
     bool getSensors ( roomberryBumper_t *bumper,
                       roomberryLightBumper_t *lightBumper,
                       roomberryLightBumperSignals_t *lightBumperSignals,
-                      int16_t *distance, int16_t *angle );
+                      uint16_t *encRight,  uint16_t *encLeft );
     
     /** Read light bump left signal value
      *
@@ -265,6 +271,18 @@ public:
      * \return Successful command execution (TRUE/FALSE)
      */
     bool getLightBumpCenterRightSignal ( uint16_t *signal );
+
+    /** Read the encoder counts for the right and left wheel
+     *
+     * The cumulative number of raw encoder counts.
+     * These numbers will roll over to 0 after they pass 65535.
+     *
+     * \param *encRight Pointer to store the right encoder count (0-65535)
+     * \param *encLeft Pointer to store the left encoder count (0-65535)
+     *
+     * \return Successful command execution (TRUE/FALSE)
+     */
+    bool getEncoderCounts( uint16_t *encRight, uint16_t *encLeft );
 
     /** Read Battery Data
      * 
@@ -389,6 +407,15 @@ public:
      */
     bool spin(int16_t velocity, bool clockwise);
 
+    /** get direction of drive wheels
+     *
+     * direction is set by last drive related command (driveStraight, stop, spin, turn)
+     *
+     * \param rightWheelDirection direction of right wheel
+     * \param rightWheelDirection direction of left wheel
+     */
+    void getWheelDirection ( roomberryDirection_t *rightWheel, roomberryDirection_t *leftWheel);
+    
     /** Turn vacuum on or off
      *
      * Control Roomba's vacuum motor
@@ -452,13 +479,15 @@ public:
      * \return Successful command execution (TRUE/FALSE)
      */
     bool playSong(uint8_t songNumber);
-
+    
 private:
     int  ttyFd;
     uint8_t motorState;
     uint8_t ledState;
     uint8_t powerLedColor;
     uint8_t powerLedIntensity;
+    
+    roomberryDirection_t rightWheelDirection, leftWheelDirection;
     
     bool getLightBumpSignal ( uint8_t pID, uint16_t *signal );
     bool sendCommand( uint8_t sendBytes, uint8_t receiveBytes, uint8_t* buffer);
